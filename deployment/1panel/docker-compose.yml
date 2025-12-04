@@ -1,0 +1,67 @@
+services:
+  memos:
+    image: memos:latest
+    container_name: memos
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app/src
+      - HF_ENDPOINT=https://hf-mirror.com
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_AUTH=neo4j/12345678
+    volumes:
+      - /data/MemOS/memos/data:/app/data
+      - /data/MemOS/memos/logs:/app/logs
+    depends_on:
+      - qdrant
+      - neo4j
+    networks:
+      - 1panel-network
+    labels:
+      createdBy: "Apps"
+
+  qdrant:
+    image: qdrant/qdrant:v1.15.3
+    container_name: qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    environment:
+      QDRANT__SERVICE__GRPC_PORT: 6334
+      QDRANT__SERVICE__HTTP_PORT: 6333
+      QDRANT__GPU__INDEXING: 0
+    volumes:
+      - /data/MemOS/qdrant/data:/qdrant/storage
+    networks:
+      - 1panel-network
+    labels:
+      createdBy: "Apps"
+
+  neo4j:
+    image: neo4j:5.26.4
+    container_name: neo4j
+    restart: unless-stopped
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+      NEO4J_AUTH: "neo4j/12345678"
+    volumes:
+      - /data/MemOS/neo4j/data:/data
+      - /data/MemOS/neo4j/logs:/logs
+      - /data/MemOS/neo4j/import:/var/lib/neo4j/import
+      - /data/MemOS/neo4j/plugins:/plugins
+    networks:
+      - 1panel-network
+    labels:
+      createdBy: "Apps"
+
+networks:
+  1panel-network:
+    external: true
+
