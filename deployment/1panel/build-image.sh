@@ -6,10 +6,12 @@
 set -e
 
 # 配置变量
-IMAGE_NAME="memos"
-IMAGE_TAG="latest"
-DOCKERFILE_PATH="$(dirname "$0")/Dockerfile"
-PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+# 支持命令行参数：./build-image.sh [IMAGE_NAME] [IMAGE_TAG]
+IMAGE_NAME="${1:-memos}"
+IMAGE_TAG="${2:-latest}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+DOCKERFILE_PATH="$SCRIPT_DIR/Dockerfile"
 
 echo "=========================================="
 echo "MemOS 镜像构建脚本"
@@ -33,12 +35,14 @@ fi
 
 # 构建镜像
 echo "开始构建镜像..."
+echo "工作目录: $PROJECT_ROOT"
+echo "Dockerfile: $DOCKERFILE_PATH"
 cd "$PROJECT_ROOT"
 
 docker build \
     -f "$DOCKERFILE_PATH" \
     -t "$IMAGE_NAME:$IMAGE_TAG" \
-    .
+    "$PROJECT_ROOT"
 
 if [ $? -eq 0 ]; then
     echo "=========================================="
