@@ -6,12 +6,49 @@ services:
     ports:
       - "8000:8000"
     environment:
+      # Python 路径
       - PYTHONPATH=/app/src
+      # HuggingFace 镜像
       - HF_ENDPOINT=https://hf-mirror.com
+      # Qdrant 配置
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
+      # Neo4j 配置
       - NEO4J_URI=bolt://neo4j:7687
-      - NEO4J_AUTH=neo4j/12345678
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=12345678
+      - NEO4J_DB_NAME=neo4j
+      # OpenAI 配置（必需）
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-your-api-key-here}
+      - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
+      # MemReader 配置（必需，用于 mem_reader.llm.api_base）
+      - MEMRADER_API_KEY=${MEMRADER_API_KEY:-${OPENAI_API_KEY:-your-api-key-here}}
+      - MEMRADER_API_BASE=${MEMRADER_API_BASE:-${OPENAI_API_BASE:-https://api.openai.com/v1}}
+      - MEMRADER_MODEL=${MEMRADER_MODEL:-gpt-4o-mini}
+      # MOS 配置
+      - MOS_CHAT_MODEL=${MOS_CHAT_MODEL:-gpt-4o-mini}
+      - MOS_CHAT_MODEL_PROVIDER=${MOS_CHAT_MODEL_PROVIDER:-openai}
+      - MOS_CHAT_TEMPERATURE=${MOS_CHAT_TEMPERATURE:-0.8}
+      - MOS_MAX_TOKENS=${MOS_MAX_TOKENS:-8000}
+      - MOS_TOP_K=${MOS_TOP_K:-50}
+      - MOS_TOP_P=${MOS_TOP_P:-0.9}
+      - MOS_USER_ID=${MOS_USER_ID:-root}
+      - MOS_MAX_TURNS_WINDOW=${MOS_MAX_TURNS_WINDOW:-20}
+      # Embedder 配置
+      - MOS_EMBEDDER_BACKEND=${MOS_EMBEDDER_BACKEND:-universal_api}
+      - MOS_EMBEDDER_PROVIDER=${MOS_EMBEDDER_PROVIDER:-openai}
+      - MOS_EMBEDDER_API_KEY=${MOS_EMBEDDER_API_KEY:-${OPENAI_API_KEY:-your-api-key-here}}
+      - MOS_EMBEDDER_API_BASE=${MOS_EMBEDDER_API_BASE:-${OPENAI_API_BASE:-https://api.openai.com/v1}}
+      - MOS_EMBEDDER_MODEL=${MOS_EMBEDDER_MODEL:-text-embedding-3-large}
+      # 嵌入维度
+      - EMBEDDING_DIMENSION=${EMBEDDING_DIMENSION:-3072}
+      # 功能开关
+      - ENABLE_ACTIVATION_MEMORY=${ENABLE_ACTIVATION_MEMORY:-false}
+      - ENABLE_PREFERENCE_MEMORY=${ENABLE_PREFERENCE_MEMORY:-false}
+      - MOS_ENABLE_SCHEDULER=${MOS_ENABLE_SCHEDULER:-false}
+      - MOS_ENABLE_DEFAULT_CUBE_CONFIG=${MOS_ENABLE_DEFAULT_CUBE_CONFIG:-false}
+      # MemReader 后端
+      - MEM_READER_BACKEND=${MEM_READER_BACKEND:-simple_struct}
     volumes:
       - /data/MemOS/memos/data:/app/data
       - /data/MemOS/memos/logs:/app/logs

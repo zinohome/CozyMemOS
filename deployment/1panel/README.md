@@ -55,24 +55,43 @@ cd /path/to/CozyMemOS
 docker build -f deployment/1panel/Dockerfile -t memos:latest .
 ```
 
-### 4. 配置环境变量（可选）
+### 4. 配置环境变量（必需）
 
-如果需要自定义配置，可以创建 `.env` 文件：
+**重要**: MemOS 需要配置 OpenAI API Key 才能正常启动。
+
+有两种方式配置环境变量：
+
+#### 方式 1: 使用环境变量（推荐）
+
+在启动前设置环境变量：
 
 ```bash
-cd deployment/1panel
-cat > .env << EOF
-OPENAI_API_KEY=your-api-key-here
-OPENAI_API_BASE=https://api.openai.com/v1
-QDRANT_HOST=qdrant
-QDRANT_PORT=6333
-NEO4J_URI=bolt://neo4j:7687
-NEO4J_AUTH=neo4j/12345678
-HF_ENDPOINT=https://hf-mirror.com
-EOF
+export OPENAI_API_KEY="your-actual-api-key"
+export OPENAI_API_BASE="https://api.openai.com/v1"
+export MEMRADER_API_KEY="your-actual-api-key"
+export MEMRADER_API_BASE="https://api.openai.com/v1"
 ```
 
-然后在 `docker-compose.yml` 中添加 `env_file` 配置。
+然后启动服务，docker-compose 会自动读取这些环境变量。
+
+#### 方式 2: 直接修改 docker-compose.yml
+
+编辑 `docker-compose.yml` 文件，找到以下行并替换默认值：
+
+```yaml
+- OPENAI_API_KEY=${OPENAI_API_KEY:-your-api-key-here}
+- MEMRADER_API_KEY=${MEMRADER_API_KEY:-${OPENAI_API_KEY:-your-api-key-here}}
+```
+
+将 `your-api-key-here` 替换为你的实际 API Key。
+
+**必需的环境变量**:
+- `OPENAI_API_KEY`: OpenAI API 密钥（必需）
+- `OPENAI_API_BASE`: OpenAI API 基础 URL（默认: https://api.openai.com/v1）
+- `MEMRADER_API_KEY`: MemReader 使用的 API 密钥（默认与 OPENAI_API_KEY 相同）
+- `MEMRADER_API_BASE`: MemReader 使用的 API 基础 URL（默认与 OPENAI_API_BASE 相同）
+
+**注意**: `MEMRADER_API_BASE` 是必需的，如果未设置会导致启动失败。
 
 ### 5. 启动服务
 
