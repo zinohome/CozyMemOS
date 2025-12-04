@@ -49,6 +49,11 @@ services:
       - MOS_ENABLE_DEFAULT_CUBE_CONFIG=${MOS_ENABLE_DEFAULT_CUBE_CONFIG:-false}
       # MemReader 后端
       - MEM_READER_BACKEND=${MEM_READER_BACKEND:-simple_struct}
+      # Reranker 配置（使用本地 cosine 算法，不需要外部服务）
+      - MOS_RERANKER_BACKEND=${MOS_RERANKER_BACKEND:-cosine_local}
+      # 如果使用 http_bge，需要设置以下变量：
+      # - MOS_RERANKER_URL=http://reranker-service:port
+      # - MOS_RERANKER_MODEL=bge-reranker-v2-m3
       # Nacos 配置中心（禁用，单机部署不需要）
       - NACOS_ENABLE_WATCH=false
     volumes:
