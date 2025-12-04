@@ -49,6 +49,8 @@ services:
       - MOS_ENABLE_DEFAULT_CUBE_CONFIG=${MOS_ENABLE_DEFAULT_CUBE_CONFIG:-false}
       # MemReader 后端
       - MEM_READER_BACKEND=${MEM_READER_BACKEND:-simple_struct}
+      # Nacos 配置中心（禁用，单机部署不需要）
+      - NACOS_ENABLE_WATCH=false
     volumes:
       - /data/MemOS/memos/data:/app/data
       - /data/MemOS/memos/logs:/app/logs
